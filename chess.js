@@ -1,3 +1,5 @@
+Moves = new Meteor.Collection("moves");
+
 if (Meteor.isClient) {
   Template.board.rendered = function() {
     if(!this._rendered) {
@@ -41,8 +43,8 @@ if (Meteor.isClient) {
 
       var updateStatus = function() {
         var status = '';
-
         var moveColor = 'White';
+
         if (game.turn() === 'b') {
           moveColor = 'Black';
         }
@@ -72,13 +74,30 @@ if (Meteor.isClient) {
         pgnEl.html(game.pgn());
       };
 
+      var save = function() {
+        var fen = game.fen();
+
+        Moves.insert({fen: fen, date: Date.parse()});
+      };
+
+      var getFen = function() {
+        var move = Moves.find({}, {sort: {date: -1}});
+
+        if(move) {
+          return move.fen;
+        } else {
+          return false;
+        }
+      };
+
       var cfg = {
         draggable: true,
-        position: 'start',
+        position: (getFen())?getFen():'start',
         onDragStart: onDragStart,
         onDrop: onDrop,
         onSnapEnd: onSnapEnd
       };
+
       board = new ChessBoard('board', cfg);
 
       updateStatus();
