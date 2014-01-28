@@ -1,15 +1,33 @@
 Moves = new Meteor.Collection("moves");
+Games = new Meteor.Collection("games");
+
+Meteor.methods({
+  getLastFen: function() {
+    var move = Moves.find({}, {sort: {date: -1}});
+
+    return move && move.fen;
+  },
+  save: function(fen) {
+    Moves.insert({fen: fen, date: Date.parse(new Date())});
+  }
+});
 
 if (Meteor.isClient) {
+  Template.board.helpers({
+    moves: function() {
+      return Moves.find();
+    }
+  });
+
   Template.board.rendered = function() {
     if(!this._rendered) {
       this._rendered = true;
 
-      var board,
-        game = new Chess(),
-        statusEl = $('#status'),
-        fenEl = $('#fen'),
-        pgnEl = $('#pgn');
+      board,
+      game = new Chess(),
+      statusEl = $('#status'),
+      fenEl = $('#fen'),
+      pgnEl = $('#pgn');
 
       // do not pick up pieces if the game is over
       // only pick up pieces for the side to move
@@ -33,6 +51,8 @@ if (Meteor.isClient) {
         if (move === null) return 'snapback';
 
         updateStatus();
+
+        Meteor.call("save", game.fen());
       };
 
       // update the board position after the piece snap
@@ -74,25 +94,10 @@ if (Meteor.isClient) {
         pgnEl.html(game.pgn());
       };
 
-      var save = function() {
-        var fen = game.fen();
-
-        Moves.insert({fen: fen, date: Date.parse()});
-      };
-
-      var getFen = function() {
-        var move = Moves.find({}, {sort: {date: -1}});
-
-        if(move) {
-          return move.fen;
-        } else {
-          return false;
-        }
-      };
-
+      var initFen = Meteor.call("getLastFen");
       var cfg = {
         draggable: true,
-        position: (getFen())?getFen():'start',
+        position: (initFen)?initFen:'start',
         onDragStart: onDragStart,
         onDrop: onDrop,
         onSnapEnd: onSnapEnd
