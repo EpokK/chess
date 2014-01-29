@@ -2,11 +2,6 @@ Moves = new Meteor.Collection("moves");
 Games = new Meteor.Collection("games");
 
 Meteor.methods({
-  getLastFen: function() {
-    var move = Moves.find({}, {sort: {date: -1}});
-
-    return move && move.fen;
-  },
   save: function(fen) {
     Moves.insert({fen: fen, date: Date.parse(new Date())});
   }
@@ -94,7 +89,7 @@ if (Meteor.isClient) {
         pgnEl.html(game.pgn());
       };
 
-      var initFen = Meteor.call("getLastFen");
+      var initFen = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0].fen;
       var cfg = {
         draggable: true,
         position: (initFen)?initFen:'start',
