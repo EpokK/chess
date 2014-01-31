@@ -1,0 +1,20 @@
+<template name="board">
+	<div class="container">
+		<div class="row">
+			<div class="span6">
+				<h1>Chess</h1>
+			<div id="board" style="width: 100%"></div>
+			</div>
+			<div class="span6">
+				<h4>Tour:</h4>
+				<span id="turn"></span>
+				<h4>Status:</h4>
+				<span id="status"></span>
+				<h4>FEN:</h4>
+				<span id="fen"></span>
+				<h4>Actions</h4>
+				<button class="btn btn-warning reset" onclick="reset();">Reset</button>
+			</div>
+		</div>
+	</div>
+</template>

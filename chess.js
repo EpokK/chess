@@ -84,13 +84,20 @@ if (Meteor.isClient) {
 
         updateStatus();
 
-        Meteor.call("save", fen, source, target, turn);
+        Meteor.call('save', fen, source, target, turn);
       };
 
       // update the board position after the piece snap
       // for castling, en passant, pawn promotion
       var onSnapEnd = function() {
         board.position(game.fen());
+      };
+
+      reset = function() {
+        board.start();
+        game.reset();
+        updateStatus();
+        Meteor.call('save', game.fen());
       };
 
       updateStatus = function() {
@@ -126,17 +133,21 @@ if (Meteor.isClient) {
         pgnEl.html(game.pgn());
       };
 
-      var cfg = {
-        draggable: true,
-        position: (initFen)?initFen:'start',
-        onDragStart: onDragStart,
-        onDrop: onDrop,
-        onSnapEnd: onSnapEnd
-      };
+      Meteor.defer(function() {
+        initFen = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0].fen;
 
-      board = new ChessBoard('board', cfg);
+        var cfg = {
+          draggable: true,
+          position: (initFen)?initFen:'start',
+          onDragStart: onDragStart,
+          onDrop: onDrop,
+          onSnapEnd: onSnapEnd
+        };
 
-      updateStatus();
+        board = new ChessBoard('board', cfg);
+
+        updateStatus();
+      });
     }
   }
 }
