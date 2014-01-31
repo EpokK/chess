@@ -1454,8 +1454,8 @@ window.Chess = function(fen) {
       return turn;
     },
 
-    set_turn: function(turn) {
-      turn = (turn === WHITE)?WHITE:BLACK;
+    set_turn: function(color) {
+      turn = (color == WHITE)?WHITE:BLACK;
     },
 
     move: function(move) {

@@ -1,14 +1,35 @@
 <head>
   <title>chess</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
-  {{> board}}
+	{{> header}}
+	{{> board}}
+	{{> footer}}
 </body>
 
 <template name="board">
-	<h1>Chess</h1>
-	<div id="board" style="width: 400px"></div>
-	<p>Status: <span id="status"></span></p>
-	<p>FEN: <span id="fen"></span></p>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4">
+
+			</div>
+			<div class="col-md-4">
+				<h1>Chess</h1>
+				<div id="board" style="width: 100%"></div>
+			</div>
+			<div class="col-md-4">
+				<h4>Status:</h4> <span id="status"></span>
+				<h4>FEN:</h4> <span id="fen"></span>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="header">
+
+</template>
+<template name="footer">
+
 </template>

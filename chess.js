@@ -27,6 +27,12 @@ if (Meteor.isClient) {
   moveStream.on('newMove', function(move) {
     if(move.fen !== game.fen()) {
       board.move(move.source + '-' + move.target);
+      game.move({
+        from: move.source,
+        to: move.target,
+        promotion: 'q'
+      });
+
       if(move.turn === 'white') {
         game.set_turn('w');
       } else {
