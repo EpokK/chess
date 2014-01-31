@@ -2,12 +2,35 @@ Moves = new Meteor.Collection("moves");
 Games = new Meteor.Collection("games");
 
 Meteor.methods({
-  save: function(fen) {
-    Moves.insert({fen: fen, date: Date.parse(new Date())});
+  save: function(fen, source, target, turn) {
+    var move = {
+      fen: fen,
+      date: Date.parse(new Date()),
+      source: source,
+      target: target,
+      turn: (turn == 'w')?'white':'black'
+    };
+    Moves.insert(move);
+    moveStream.emit('newMove', move);
   }
 });
 
 if (Meteor.isClient) {
+  var initFen;
+
+  Meteor.subscribe('moves', function() {
+    initFen = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0].fen;
+  });
+
+  moveStream = new Meteor.Stream("moveStream");
+
+  moveStream.on('newMove', function(move) {
+    if(move.fen !== game.fen()) {
+      board.move(move.source + '-' + move.target);
+      board.orientation(move.turn);
+    }
+  });
+
   Template.board.helpers({
     moves: function() {
       return Moves.find();
@@ -41,13 +64,15 @@ if (Meteor.isClient) {
           to: target,
           promotion: 'q' // NOTE: always promote to a pawn for example simplicity
         });
+        var fen = game.fen();
+        var turn = game.turn();
 
         // illegal move
         if (move === null) return 'snapback';
 
         updateStatus();
 
-        Meteor.call("save", game.fen());
+        Meteor.call("save", fen, source, target, turn);
       };
 
       // update the board position after the piece snap
@@ -89,7 +114,6 @@ if (Meteor.isClient) {
         pgnEl.html(game.pgn());
       };
 
-      var initFen = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0].fen;
       var cfg = {
         draggable: true,
         position: (initFen)?initFen:'start',
@@ -108,5 +132,19 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
+  });
+
+  Meteor.publish("moves", function() {
+    return Moves.find({});
+  });
+
+  moveStream = new Meteor.Stream("moveStream");
+
+  moveStream.permissions.write(function() {
+    return true;
+  });
+
+  moveStream.permissions.read(function() {
+    return true;
   });
 }
