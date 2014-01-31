@@ -27,7 +27,13 @@ if (Meteor.isClient) {
   moveStream.on('newMove', function(move) {
     if(move.fen !== game.fen()) {
       board.move(move.source + '-' + move.target);
-      board.orientation(move.turn);
+      if(move.turn === 'white') {
+        game.set_turn('w');
+      } else {
+        game.set_turn('b');
+      }
+
+      updateStatus();
     }
   });
 
@@ -81,7 +87,7 @@ if (Meteor.isClient) {
         board.position(game.fen());
       };
 
-      var updateStatus = function() {
+      updateStatus = function() {
         var status = '';
         var moveColor = 'White';
 
