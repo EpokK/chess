@@ -1,5 +1,5 @@
 <head>
-  <title>chess</title>
+  <title>Chess</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
@@ -12,16 +12,15 @@
 <template name="board">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-4">
-
-			</div>
-			<div class="col-md-4">
-				<h1>Chess</h1>
+			<div class="span9">
+				<div class="span6">
+					<h1>Chess</h1>
 				<div id="board" style="width: 100%"></div>
-			</div>
-			<div class="col-md-4">
-				<h4>Status:</h4> <span id="status"></span>
-				<h4>FEN:</h4> <span id="fen"></span>
+				</div>
+				<div class="span3">
+					<h4>Status:</h4> <span id="status"></span>
+					<h4>FEN:</h4> <span id="fen"></span>
+				</div>
 			</div>
 		</div>
 	</div>
