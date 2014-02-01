@@ -16,6 +16,7 @@ Meteor.methods({
   },
   reset: function() {
     Moves.remove({});
+    moveStream.emit('reset');
   }
 
 });
@@ -44,7 +45,7 @@ if (Meteor.isClient) {
     // lastMove = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0];
   });
 
-  moveStream = new Meteor.Stream("moveStream");
+  moveStream = new Meteor.Stream("stream");
 
   moveStream.on('newMove', function(move) {
     if(move.fen !== game.fen()) {
@@ -60,8 +61,18 @@ if (Meteor.isClient) {
         game.set_turn('w');
       }
 
+      round = move.round;
+
       updateStatusAndRound();
     }
+  });
+
+  moveStream.on('reset', function() {
+    board.start();
+    game.reset();
+    game.set_turn('w');
+    round = 0;
+    updateStatusAndRound();
   });
 
   Template.board.helpers({
@@ -118,10 +129,7 @@ if (Meteor.isClient) {
       };
 
       reset = function() {
-        board.start();
-        game.reset();
-        updateStatusAndRound();
-        Meteor.call('save', game.fen(), null, null, 'white', 0);
+        Meteor.call('reset');
       };
 
       updateStatusAndRound = function() {

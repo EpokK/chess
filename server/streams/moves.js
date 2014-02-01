@@ -1,4 +1,4 @@
-moveStream = new Meteor.Stream("moveStream");
+moveStream = new Meteor.Stream("stream");
 
 moveStream.permissions.write(function() {
 	return true;
