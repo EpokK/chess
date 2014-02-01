@@ -29,6 +29,16 @@ if (Meteor.isClient) {
     Session.set('data_loaded', false);
   });
 
+  Meteor.autorun(function() {
+    if(Meteor.userId()) {
+      // board.draggable = true;
+    }
+  });
+
+  Meteor.logout(function() {
+    // board.draggable = false;
+  });
+
   Meteor.subscribe('moves', function() {
     Session.set('data_loaded', true);
     // lastMove = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0];
@@ -145,7 +155,7 @@ if (Meteor.isClient) {
 
       // Appele lors du load de la page : init
       // du chessboard avec le dernier fen en base
-      var init = function() {
+      init = function() {
         var lastMove = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0];
         var fen = lastMove && lastMove.fen;
         round = (lastMove && lastMove.round)?lastMove.round:0;
@@ -153,6 +163,7 @@ if (Meteor.isClient) {
         // init ChessBoard
         board = new ChessBoard('board', {
           draggable: true,
+          // draggable: Meteor.loggingIn(),
           position: (fen)?fen:'start',
           onDragStart: onDragStart,
           onDrop: onDrop,
@@ -186,7 +197,9 @@ if (Meteor.isClient) {
       }
 
       Meteor.defer(function() {
-        init();
+        // if(Meteor.loggingIn()) {
+          init();
+        // }
       });
     }
   }

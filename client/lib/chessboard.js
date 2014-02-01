@@ -1314,6 +1314,10 @@ widget.flip = function() {
   widget.orientation('flip');
 };
 
+widget.draggable = function(dnd) {
+  cfg.draggable = dnd;
+};
+
 /*
 // TODO: write this, GitHub Issue #5
 widget.highlight = function() {
