@@ -1,6 +1,7 @@
 {
   "packages": {
     "streams": {},
-    "accounts-ui-bootstrap-dropdown": {}
+    "accounts-ui-bootstrap-dropdown": {},
+    "font-awesome": {}
   }
 }

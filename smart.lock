@@ -3,7 +3,8 @@
   "dependencies": {
     "basePackages": {
       "streams": {},
-      "accounts-ui-bootstrap-dropdown": {}
+      "accounts-ui-bootstrap-dropdown": {},
+      "font-awesome": {}
     },
     "packages": {
       "streams": {
@@ -15,6 +16,11 @@
         "git": "https://github.com/erobit/meteor-accounts-ui-bootstrap-dropdown.git",
         "tag": "v0.6.5.1",
         "commit": "c8b29d2e7f8611d6dec9d6d23c1c2b94e000b0fb"
+      },
+      "font-awesome": {
+        "git": "https://github.com/nate-strauser/meteor-font-awesome.git",
+        "tag": "v4.0.3",
+        "commit": "61e9361384347547ae144f8228faa4deffda23db"
       }
     }
   }

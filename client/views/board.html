@@ -12,7 +12,31 @@
 			</div>
 			<div class="span4">
 				<h4>Actions</h4>
-				<button class="btn btn-warning reset" onclick="reset();">Reset</button>
+				<table>
+					<tr>
+						<td>
+							<div style="text-align: center;" class="well">
+								<i class="fa fa-smile-o fa-4x"></i>
+							</div>
+						</td>
+						<td style="padding-left: 10px;">
+							<p>
+								<button class="btn" onclick=""><i class="fa fa-lg fa-smile-o"></i></button>
+								<button class="btn" onclick=""><i class="fa fa-lg fa-meh-o"></i></button>
+								<button class="btn" onclick=""><i class="fa fa-lg fa-frown-o"></i></button>
+							</p>
+							<p>
+								<button class="btn" onclick=""><i class="fa fa-lg fa-thumbs-o-up"></i></button>
+								<button class="btn" onclick=""><i class="fa fa-lg fa-question"></i></button>
+								<button class="btn" onclick=""><i class="fa fa-lg fa-thumbs-o-down"></i></button>
+							</p>
+							<p>
+								<button class="btn btn-warning" onclick="">Surrender</button>
+								<button class="btn btn-warning" onclick="reset();">Reset</button>
+							</p>
+						</td>
+					</tr>
+				</table>
 				<h4>Historique</h4>
 				{{#each moves}}
 					<span title="{{fen}}">{{round}}. {{source}}-{{target}}</span>
