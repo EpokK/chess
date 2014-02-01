@@ -12,40 +12,61 @@ Meteor.methods({
     };
     Moves.insert(move);
     moveStream.emit('newMove', move);
+  },
+  reset: function() {
+    Moves.remove({});
   }
+
 });
 
 if (Meteor.isClient) {
-  var initFen;
+  var lastMove;
+  var fenStart = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+  Meteor.startup(function() {
+    Session.set('data_loaded', false);
+  });
 
   Meteor.subscribe('moves', function() {
-    initFen = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0].fen;
+    Session.set('data_loaded', true);
+    // lastMove = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0];
   });
 
   moveStream = new Meteor.Stream("moveStream");
 
   moveStream.on('newMove', function(move) {
     if(move.fen !== game.fen()) {
-      board.move(move.source + '-' + move.target);
       game.move({
         from: move.source,
         to: move.target,
         promotion: 'q'
       });
-
-      if(move.turn === 'white') {
-        game.set_turn('w');
-      } else {
+      board.move(move.source + '-' + move.target);
+      if(move.turn === 'black') {
         game.set_turn('b');
+      } else {
+        game.set_turn('w');
       }
 
-      updateStatus();
+      // updateStatus();
     }
   });
 
   Template.board.helpers({
     moves: function() {
-      return Moves.find();
+      // if(Session.get('data_loaded')) {
+        return Moves.find({}, {sort: {date: -1}});
+      // } else {
+        // return [];
+      // }
+    },
+    lastFen: function() {
+      // if(Session.get('data_loaded')) {
+      //   return Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0].fen;
+      // }
+    },
+    turn: function() {
+
     }
   });
 
@@ -54,10 +75,7 @@ if (Meteor.isClient) {
       this._rendered = true;
 
       board,
-      game = new Chess(),
-      statusEl = $('#status'),
-      fenEl = $('#fen'),
-      pgnEl = $('#pgn');
+      game = new Chess();
 
       // do not pick up pieces if the game is over
       // only pick up pieces for the side to move
@@ -82,8 +100,6 @@ if (Meteor.isClient) {
         // illegal move
         if (move === null) return 'snapback';
 
-        updateStatus();
-
         Meteor.call('save', fen, source, target, turn);
       };
 
@@ -96,78 +112,78 @@ if (Meteor.isClient) {
       reset = function() {
         board.start();
         game.reset();
-        updateStatus();
-        Meteor.call('save', game.fen());
+        // updateStatus();
+        Meteor.call('save', game.fen(), null, null, 'white');
       };
 
-      updateStatus = function() {
-        var status = '';
-        var moveColor = 'White';
+      // updateStatus = function() {
+      //   var last = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0];
+      //   var moveColor = last && last.turn;
+      //   var status;
 
-        if (game.turn() === 'b') {
-          moveColor = 'Black';
-        }
+      //   // checkmate?
+      //   if (game.in_checkmate() === true) {
+      //     status = 'Game over, ' + moveColor + ' is in checkmate.';
+      //   }
 
-        // checkmate?
-        if (game.in_checkmate() === true) {
-          status = 'Game over, ' + moveColor + ' is in checkmate.';
-        }
+      //   // draw?
+      //   else if (game.in_draw() === true) {
+      //     status = 'Game over, drawn position';
+      //   }
 
-        // draw?
-        else if (game.in_draw() === true) {
-          status = 'Game over, drawn position';
-        }
+      //   // game still on
+      //   else {
+      //     status = moveColor + ' to move';
 
-        // game still on
-        else {
-          status = moveColor + ' to move';
+      //     // check?
+      //     if (game.in_check() === true) {
+      //       status += ', ' + moveColor + ' is in check';
+      //     }
+      //   }
+      //   return 'status';
+      // };
 
-          // check?
-          if (game.in_check() === true) {
-            status += ', ' + moveColor + ' is in check';
-          }
-        }
+      // Appele lors du load de la page : init
+      // du chessboard avec le dernier fen en base
+      var init = function() {
+        var lastMove = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0];
+        var fen = lastMove && lastMove.fen;
 
-        statusEl.html(status);
-        fenEl.html(game.fen());
-        pgnEl.html(game.pgn());
-      };
-
-      Meteor.defer(function() {
-        initFen = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0].fen;
-
-        var cfg = {
+        board = new ChessBoard('board', {
           draggable: true,
-          position: (initFen)?initFen:'start',
+          position: (fen)?fen:'start',
           onDragStart: onDragStart,
           onDrop: onDrop,
           onSnapEnd: onSnapEnd
-        };
+        });
 
-        board = new ChessBoard('board', cfg);
+        // init turn
+        if(lastMove && lastMove.turn) {
+          if(lastMove.turn === 'black') {
+            game.set_turn('b');
+          } else {
+            game.set_turn('w');
+          }
+        } else {
+          lastMove = {};
+          lastMove.turn = 'white';
+          game.set_turn('w');
+        }
 
-        updateStatus();
+        // Load fen
+        if(fen && fen !== fenStart) {
+          game.load(fen);
+        }
+
+        // if(fen !== game.fen()) {
+        //   console.log('save after init');
+        //   Meteor.call('save', game.fen(), lastMove.source, lastMove.target, lastMove.turn);
+        // }
+      }
+
+      Meteor.defer(function() {
+        init();
       });
     }
   }
-}
-
-if (Meteor.isServer) {
-  Meteor.startup(function () {
-    // code to run on server at startup
-  });
-
-  Meteor.publish("moves", function() {
-    return Moves.find({});
-  });
-
-  moveStream = new Meteor.Stream("moveStream");
-
-  moveStream.permissions.write(function() {
-    return true;
-  });
-
-  moveStream.permissions.read(function() {
-    return true;
-  });
 }

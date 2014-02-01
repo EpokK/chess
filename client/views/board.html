@@ -6,14 +6,18 @@
 			<div id="board" style="width: 100%"></div>
 			</div>
 			<div class="span6">
-				<h4>Tour:</h4>
-				<span id="turn"></span>
 				<h4>Status:</h4>
-				<span id="status"></span>
+				<span>{{status}}</span>
 				<h4>FEN:</h4>
-				<span id="fen"></span>
+				<span>{{lastFen}}</span>
 				<h4>Actions</h4>
 				<button class="btn btn-warning reset" onclick="reset();">Reset</button>
+				<h4>Historique</h4>
+				<ul style="height: 200px;overflow-y: auto;">
+					{{#each moves}}
+						<li>{{source}}-{{target}} <a href="" title="{{fen}}">fen</a></li>
+					{{/each}}
+				</ul>
 			</div>
 		</div>
 	</div>
