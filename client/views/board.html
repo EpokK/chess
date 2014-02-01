@@ -1,23 +1,21 @@
 <template name="board">
 	<div class="container">
 		<div class="row">
-			<div class="span6">
-				<h1>Chess</h1>
-			<div id="board" style="width: 100%"></div>
+			<div class="span3">
+				<h4>Round : <span id="round"></span></h4>
+				<h4>Status : <span id="status"></span></h4>
 			</div>
-			<div class="span6">
-				<h4>Status:</h4>
-				<span>{{status}}</span>
-				<h4>FEN:</h4>
-				<span>{{lastFen}}</span>
+			<div class="span3">
+				<h2>Chess</h2>
+				<div id="board" style="width: 100%"></div>
+			</div>
+			<div class="span3">
 				<h4>Actions</h4>
 				<button class="btn btn-warning reset" onclick="reset();">Reset</button>
 				<h4>Historique</h4>
-				<ul style="height: 200px;overflow-y: auto;">
-					{{#each moves}}
-						<li>{{source}}-{{target}} <a href="" title="{{fen}}">fen</a></li>
-					{{/each}}
-				</ul>
+				{{#each moves}}
+					<div title="{{fen}}">{{round}}. {{source}}-{{target}}</div>
+				{{/each}}
 			</div>
 		</div>
 	</div>

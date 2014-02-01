@@ -2,8 +2,9 @@ Moves = new Meteor.Collection("moves");
 Games = new Meteor.Collection("games");
 
 Meteor.methods({
-  save: function(fen, source, target, turn) {
+  save: function(fen, source, target, turn, round) {
     var move = {
+      round: round,
       fen: fen,
       date: Date.parse(new Date()),
       source: source,
@@ -21,6 +22,7 @@ Meteor.methods({
 
 if (Meteor.isClient) {
   var lastMove;
+  var round = 0;
   var fenStart = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
   Meteor.startup(function() {
@@ -48,25 +50,17 @@ if (Meteor.isClient) {
         game.set_turn('w');
       }
 
-      // updateStatus();
+      updateStatusAndRound();
     }
   });
 
   Template.board.helpers({
     moves: function() {
       // if(Session.get('data_loaded')) {
-        return Moves.find({}, {sort: {date: -1}});
+        return Moves.find({});
       // } else {
         // return [];
       // }
-    },
-    lastFen: function() {
-      // if(Session.get('data_loaded')) {
-      //   return Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0].fen;
-      // }
-    },
-    turn: function() {
-
     }
   });
 
@@ -100,7 +94,11 @@ if (Meteor.isClient) {
         // illegal move
         if (move === null) return 'snapback';
 
-        Meteor.call('save', fen, source, target, turn);
+        round = round + 1;
+
+        updateStatusAndRound();
+
+        Meteor.call('save', fen, source, target, turn, round);
       };
 
       // update the board position after the piece snap
@@ -112,43 +110,47 @@ if (Meteor.isClient) {
       reset = function() {
         board.start();
         game.reset();
-        // updateStatus();
-        Meteor.call('save', game.fen(), null, null, 'white');
+        updateStatusAndRound();
+        Meteor.call('save', game.fen(), null, null, 'white', 0);
       };
 
-      // updateStatus = function() {
-      //   var last = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0];
-      //   var moveColor = last && last.turn;
-      //   var status;
+      updateStatusAndRound = function() {
+        var moveColor = (game.turn() === 'w')?'White':'Black';
+        var statusElement = document.getElementById('status');
+        var roundElement = document.getElementById('round');
 
-      //   // checkmate?
-      //   if (game.in_checkmate() === true) {
-      //     status = 'Game over, ' + moveColor + ' is in checkmate.';
-      //   }
+        // checkmate?
+        if (game.in_checkmate() === true) {
+          status = 'Game over, ' + moveColor + ' is in checkmate.';
+        }
 
-      //   // draw?
-      //   else if (game.in_draw() === true) {
-      //     status = 'Game over, drawn position';
-      //   }
+        // draw?
+        else if (game.in_draw() === true) {
+          status = 'Game over, drawn position';
+        }
 
-      //   // game still on
-      //   else {
-      //     status = moveColor + ' to move';
+        // game still on
+        else {
+          status = moveColor + ' to move';
 
-      //     // check?
-      //     if (game.in_check() === true) {
-      //       status += ', ' + moveColor + ' is in check';
-      //     }
-      //   }
-      //   return 'status';
-      // };
+          // check?
+          if (game.in_check() === true) {
+            status += ', ' + moveColor + ' is in check';
+          }
+        }
+
+        statusElement.innerHTML = status;
+        roundElement.innerHTML = round;
+      };
 
       // Appele lors du load de la page : init
       // du chessboard avec le dernier fen en base
       var init = function() {
         var lastMove = Moves.find({}, {sort: {date: -1}, limit: 1 }).fetch()[0];
         var fen = lastMove && lastMove.fen;
+        round = (lastMove && lastMove.round)?lastMove.round:0;
 
+        // init ChessBoard
         board = new ChessBoard('board', {
           draggable: true,
           position: (fen)?fen:'start',
@@ -174,6 +176,8 @@ if (Meteor.isClient) {
         if(fen && fen !== fenStart) {
           game.load(fen);
         }
+
+        updateStatusAndRound();
 
         // if(fen !== game.fen()) {
         //   console.log('save after init');
