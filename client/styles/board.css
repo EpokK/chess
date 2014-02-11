@@ -1,0 +1,13 @@
+.clockBlock {
+	text-align: center;
+	margin-bottom: 15px;
+	margin-top: 15px;
+	font-weight: bold;
+}
+
+.clockBlock.yellow {
+	background-color: #f1c40f;
+	border-radius: 10px;
+}
+
+#spinner { height: 300px; }

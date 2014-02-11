@@ -1,7 +1,8 @@
 {
   "packages": {
     "streams": {},
-    "accounts-ui-bootstrap-dropdown": {},
-    "font-awesome": {}
+    "font-awesome": {},
+    "iron-router": {},
+    "spin": {}
   }
 }

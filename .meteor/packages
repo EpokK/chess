@@ -8,5 +8,6 @@ preserve-inputs
 streams
 bootstrap
 accounts-ui-bootstrap-dropdown
-accounts-password
 font-awesome
+iron-router
+spin

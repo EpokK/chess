@@ -6,37 +6,29 @@
 				<h4>Status : <span id="status"></span></h4>
 			</div>
 			<div class="span4">
-				<div class="well">
+				<div class="well" style="padding-top: 0;padding-bottom: 0;">
+					<h3 style="text-align: center;">{{currentGameId}}</h3>
+					<div id="blackClock" class="clockBlock"></div>
 					<div id="board" style="width: 100%"></div>
+					<div id="whiteClock" class="clockBlock"></div>
 				</div>
 			</div>
 			<div class="span4">
 				<h4>Actions</h4>
-				<table>
-					<tr>
-						<td>
-							<div style="text-align: center;" class="well">
-								<i class="fa fa-smile-o fa-4x"></i>
-							</div>
-						</td>
-						<td style="padding-left: 10px;">
-							<p>
-								<button class="btn" onclick=""><i class="fa fa-lg fa-smile-o"></i></button>
-								<button class="btn" onclick=""><i class="fa fa-lg fa-meh-o"></i></button>
-								<button class="btn" onclick=""><i class="fa fa-lg fa-frown-o"></i></button>
-							</p>
-							<p>
-								<button class="btn" onclick=""><i class="fa fa-lg fa-thumbs-o-up"></i></button>
-								<button class="btn" onclick=""><i class="fa fa-lg fa-question"></i></button>
-								<button class="btn" onclick=""><i class="fa fa-lg fa-thumbs-o-down"></i></button>
-							</p>
-							<p>
-								<button class="btn btn-warning" onclick="">Surrender</button>
-								<button class="btn btn-warning" onclick="reset();">Reset</button>
-							</p>
-						</td>
-					</tr>
-				</table>
+				<p>
+					<button class="btn"><i class="fa fa-lg fa-smile-o"></i></button>
+					<button class="btn"><i class="fa fa-lg fa-meh-o"></i></button>
+					<button class="btn"><i class="fa fa-lg fa-frown-o"></i></button>
+				</p>
+				<p>
+					<button class="btn"><i class="fa fa-lg fa-thumbs-o-up"></i></button>
+					<button class="btn"><i class="fa fa-lg fa-question"></i></button>
+					<button class="btn"><i class="fa fa-lg fa-thumbs-o-down"></i></button>
+				</p>
+				<p>
+					<button class="btn btn-warning surrender">Surrender</button>
+					<button class="btn btn-warning reset">Reset</button>
+				</p>
 				<h4>Historique</h4>
 				{{#each moves}}
 					<span title="{{fen}}">{{round}}. {{source}}-{{target}}</span>
