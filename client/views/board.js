@@ -1,9 +1,12 @@
 Template.board.events({
   'click .smile': function() {
-
+    moveStream.emit('smile');
   },
   'click .reset': function() {
-
+    moveStream.emit('reset');
+  },
+  'click .surrender': function() {
+    moveStream.emit('reset');
   }
 });
 
@@ -169,11 +172,20 @@ moveStream.on('newMove', function(move) {
 });
 
 moveStream.on('reset', function() {
-  board.start();
-  game.reset();
-  game.set_turn('w');
-  round = 0;
-  updateStatusAndRound();
+  // board.start();
+  // game.reset();
+  // game.set_turn('w');
+  // round = 0;
+  // updateStatusAndRound();
+  var id = Games.insert({});
+  var game = {
+    _id: id
+  };
+  Router.go('game', game);
+});
+
+moveStream.on('smile', function() {
+  alert(':)');
 });
 
 Template.board.rendered = function() {
