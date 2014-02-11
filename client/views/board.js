@@ -9,7 +9,7 @@ Template.board.events({
 
 Template.board.helpers({
   moves: function() {
-    return Moves.find({});
+    return Moves.find({gameId: Session.get('currentGameId')});
   },
   currentGameId: function() {
     return Session.get('currentGameId');

@@ -1,3 +1,3 @@
 Meteor.publish("moves", function() {
-	return Moves.find();
+	return Moves.find({});
 });
