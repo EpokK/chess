@@ -11,3 +11,10 @@
 }
 
 #spinner { height: 300px; }
+
+.footer {
+	background-color: rgb(245, 245, 245);
+	color: rgb(51, 51, 51);
+	height: 60px;
+	line-height: 20px;
+}
