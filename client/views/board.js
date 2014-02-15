@@ -1,12 +1,51 @@
+chessStream = new Meteor.Stream("chessStream");
+
+chessStream.on('newMove', function(move) {
+  if(move.fen !== game.fen()) {
+    game.move({
+      from: move.source,
+      to: move.target,
+      promotion: 'q'
+    });
+    board.move(move.source + '-' + move.target);
+    if(move.turn === 'black') {
+      game.set_turn('b');
+    } else {
+      game.set_turn('w');
+    }
+
+    round = move.round;
+
+    updateStatusAndRound();
+  }
+});
+
+chessStream.on('reset', function() {
+  // board.start();
+  // game.reset();
+  // game.set_turn('w');
+  // round = 0;
+  // updateStatusAndRound();
+  var id = Games.insert({});
+  var game = {
+    _id: id
+  };
+  Router.go('game', game);
+});
+
+chessStream.on('smile', function() {
+  alert(':)');
+});
+
 Template.board.events({
   'click .smile': function() {
-    moveStream.emit('smile');
+    chessStream.emit('smile');
   },
   'click .reset': function() {
-    moveStream.emit('reset');
+    chessStream.emit('reset');
   },
   'click .surrender': function() {
-    moveStream.emit('reset');
+    chessStream.emit('reset');
   }
 });
 
@@ -54,6 +93,16 @@ var onDrop = function(source, target) {
   updateStatusAndRound();
 
   Meteor.call('save', Session.get('currentGameId'), fen, source, target, turn, round);
+
+  chessStream.emit('newMove', {
+    gameId: Session.get('currentGameId'),
+    round: round,
+    fen: fen,
+    date: Date.parse(new Date()),
+    source: source,
+    target: target,
+    turn: (turn == 'w')?'white':'black'
+  });
 };
 
 // update the board position after the piece snap
@@ -148,45 +197,6 @@ init = function() {
 
   initCountdowns();
 }
-
-moveStream = new Meteor.Stream("stream");
-
-moveStream.on('newMove', function(move) {
-  if(move.fen !== game.fen()) {
-    game.move({
-      from: move.source,
-      to: move.target,
-      promotion: 'q'
-    });
-    board.move(move.source + '-' + move.target);
-    if(move.turn === 'black') {
-      game.set_turn('b');
-    } else {
-      game.set_turn('w');
-    }
-
-    round = move.round;
-
-    updateStatusAndRound();
-  }
-});
-
-moveStream.on('reset', function() {
-  // board.start();
-  // game.reset();
-  // game.set_turn('w');
-  // round = 0;
-  // updateStatusAndRound();
-  var id = Games.insert({});
-  var game = {
-    _id: id
-  };
-  Router.go('game', game);
-});
-
-moveStream.on('smile', function() {
-  alert(':)');
-});
 
 Template.board.rendered = function() {
   if(!this._rendered) {

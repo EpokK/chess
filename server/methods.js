@@ -10,11 +10,10 @@ Meteor.methods({
       turn: (turn == 'w')?'white':'black'
     };
     Moves.insert(move);
-    console.log('newMove methods');
-    moveStream.emit('newMove', move);
+    // moveStream.emit('newMove', move);
   },
   reset: function() {
     Moves.remove({});
-    moveStream.emit('reset');
+    // moveStream.emit('reset');
   }
 });
