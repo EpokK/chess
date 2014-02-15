@@ -2,18 +2,18 @@
 	<div class="container">
 		<div class="row">
 			<div class="span4">
-				<h4>Round : <span id="round"></span></h4>
-				<h4>Status : <span id="status"></span></h4>
 			</div>
 			<div class="span4">
 				<div class="well" style="padding-top: 0;padding-bottom: 0;">
-					<h3 style="text-align: center;">{{currentGameId}}</h3>
+					<h3 style="text-align: center;">{{currentGameId}}:<span id="round"></span></h3>
 					<div id="blackClock" class="clockBlock"></div>
 					<div id="board" style="width: 100%"></div>
 					<div id="whiteClock" class="clockBlock"></div>
 				</div>
 			</div>
 			<div class="span4">
+				<h4>Status : </h4>
+				<div id="status"></div>
 				<h4>Actions</h4>
 				<p>
 					<button class="btn" title="smile"><i class="fa fa-lg fa-smile-o smile"></i></button>
