@@ -1,7 +1,14 @@
 chessStream = new Meteor.Stream("chessStream");
 
+var PAWN = 'p';
+var KNIGHT = 'n';
+var BISHOP = 'b';
+var ROOK = 'r';
+var QUEEN = 'q';
+var KING = 'k';
+
 chessStream.on('newMove', function(move) {
-  if(move.fen !== game.fen()) {
+  if(move.gameId == Session.get('currentGameId') && move.fen !== game.fen()) {
     game.move({
       from: move.source,
       to: move.target,
@@ -21,11 +28,6 @@ chessStream.on('newMove', function(move) {
 });
 
 chessStream.on('reset', function() {
-  // board.start();
-  // game.reset();
-  // game.set_turn('w');
-  // round = 0;
-  // updateStatusAndRound();
   var id = Games.insert({});
   var game = {
     _id: id
@@ -87,6 +89,11 @@ var onDrop = function(source, target) {
 
   // illegal move
   if (move === null) return 'snapback';
+
+  // cap
+  if(typeof move.captured !== 'undefined') {
+
+  }
 
   round = round + 1;
 
