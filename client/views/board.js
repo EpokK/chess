@@ -35,13 +35,30 @@ chessStream.on('reset', function() {
   Router.go('game', game);
 });
 
-chessStream.on('smile', function() {
-  alert(':)');
+chessStream.on('emote', function(emote, gameId) {
+  if(gameId === Session.get('currentGameId')) {
+    alert(emote);
+  }
 });
 
 Template.board.events({
   'click .smile': function() {
-    chessStream.emit('smile');
+    chessStream.emit('emote', ':)', gameId);
+  },
+  'click .meh': function() {
+    chessStream.emit('emote', ':|', gameId);
+  },
+  'click .frown': function() {
+    chessStream.emit('emote', ':(', gameId);
+  },
+  'click .up': function() {
+    chessStream.emit('emote', '+1', gameId);
+  },
+  'click .question': function() {
+    chessStream.emit('emote', '?', gameId);
+  },
+  'click .down': function() {
+    chessStream.emit('emote', '-1', gameId);
   },
   'click .reset': function() {
     chessStream.emit('reset');
