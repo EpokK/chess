@@ -5,15 +5,17 @@
 			</div>
 			<div class="span4">
 				<div class="well" style="padding-top: 0;padding-bottom: 0;">
-					<h3 style="text-align: center;">{{currentGameId}}:<span id="round"></span></h3>
+					<h4 style="text-align: center;background-color: #f1c40f;border-radius: 10px;padding: 5px;">
+						<div id="status"></div>
+					</h4>
 					<div id="blackClock" class="clockBlock"></div>
 					<div id="board" style="width: 100%"></div>
 					<div id="whiteClock" class="clockBlock"></div>
 				</div>
 			</div>
 			<div class="span4">
-				<h4>Status : </h4>
-				<div id="status"></div>
+				<h4>Game : </h4>
+				{{currentGameId}}:<span id="round"></span>
 				<h4>Actions</h4>
 				<p>
 					<button class="btn" title="smile"><i class="fa fa-lg fa-smile-o smile"></i></button>

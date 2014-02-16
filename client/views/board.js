@@ -36,6 +36,7 @@ chessStream.on('reset', function() {
 });
 
 chessStream.on('emote', function(emote, gameId) {
+  console.log('on emote');
   if(gameId === Session.get('currentGameId')) {
     alert(emote);
   }
@@ -43,22 +44,22 @@ chessStream.on('emote', function(emote, gameId) {
 
 Template.board.events({
   'click .smile': function() {
-    chessStream.emit('emote', ':)', gameId);
+    chessStream.emit('emote', ':)', Session.get('currentGameId'));
   },
   'click .meh': function() {
-    chessStream.emit('emote', ':|', gameId);
+    chessStream.emit('emote', ':|', Session.get('currentGameId'));
   },
   'click .frown': function() {
-    chessStream.emit('emote', ':(', gameId);
+    chessStream.emit('emote', ':(', Session.get('currentGameId'));
   },
   'click .up': function() {
-    chessStream.emit('emote', '+1', gameId);
+    chessStream.emit('emote', '+1', Session.get('currentGameId'));
   },
   'click .question': function() {
-    chessStream.emit('emote', '?', gameId);
+    chessStream.emit('emote', '?', Session.get('currentGameId'));
   },
   'click .down': function() {
-    chessStream.emit('emote', '-1', gameId);
+    chessStream.emit('emote', '-1', Session.get('currentGameId'));
   },
   'click .reset': function() {
     chessStream.emit('reset');
