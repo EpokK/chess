@@ -36,7 +36,6 @@ chessStream.on('reset', function() {
 });
 
 chessStream.on('emote', function(emote, gameId) {
-  console.log('on emote');
   if(gameId === Session.get('currentGameId')) {
     alert(emote);
   }
